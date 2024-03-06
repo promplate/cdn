@@ -1,0 +1,20 @@
+[project]
+dependencies = ["niquests~=3.6.3", "rich~=13.7.1"]
+requires-python = "==3.12.*"
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = ["ruff~=0.4.3"]
+
+[tool.pdm.scripts]
+fmt = { composite = ["ruff format", "ruff check --fix"] }
+
+[tool.ruff]
+line-length = 150
+show-fixes = true
+
+[tool.ruff.lint]
+select = ["I", "N", "F", "E", "W", "PERF", "RUF"]
+ignore = ["RUF200"]
