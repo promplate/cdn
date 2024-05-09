@@ -12,7 +12,7 @@ T = TypeVar("T")
 
 concurrency = cpu_count() or 1
 
-get_thead_pool = cache(lambda: ThreadPoolExecutor(concurrency))
+get_thread_pool = cache(lambda: ThreadPoolExecutor(concurrency))
 
 
 @overload
@@ -32,7 +32,7 @@ def run_in_threadpool(func):  # type: ignore
             with suppress(StopIteration):
                 obj = object()
                 while True:
-                    res = await get_running_loop().run_in_executor(get_thead_pool(), next, it, obj)
+                    res = await get_running_loop().run_in_executor(get_thread_pool(), next, it, obj)
                     if res is obj:
                         break
                     else:
@@ -42,6 +42,6 @@ def run_in_threadpool(func):  # type: ignore
 
         @wraps(func)
         async def _(*args, **kwargs):
-            return await get_running_loop().run_in_executor(get_thead_pool(), partial(func, *args, **kwargs))
+            return await get_running_loop().run_in_executor(get_thread_pool(), partial(func, *args, **kwargs))
 
     return _

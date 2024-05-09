@@ -8,9 +8,8 @@ from rich.progress import Progress
 
 get_progress = cache(Progress)
 
-INTERACTIVE = stdout.isatty()
 
-if INTERACTIVE:
+if INTERACTIVE := stdout.isatty():
     get_progress().start()
 
     register(get_progress().stop)
