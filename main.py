@@ -1,5 +1,4 @@
 from downloads import pyodide
-from utils.progress import progress
 
 
 async def main():
@@ -9,5 +8,4 @@ async def main():
 if __name__ == "__main__":
     from asyncio import run
 
-    with progress:
-        run(main())
+    run(main())

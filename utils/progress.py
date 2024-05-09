@@ -1,11 +1,26 @@
-from functools import partial
+from atexit import register
+from functools import cache, partial
+from sys import stdout
+from typing import TYPE_CHECKING
 
+from rich import print
 from rich.progress import Progress
 
-progress = Progress()
+get_progress = cache(Progress)
+
+INTERACTIVE = stdout.isatty()
+
+if INTERACTIVE:
+    get_progress().start()
+
+    register(get_progress().stop)
 
 
 class Task:
     def __init__(self, description: str, total: int | None = None):
-        self.id = progress.add_task(description, True, total)
-        self.update = partial(progress.update, self.id, refresh=True)
+        if INTERACTIVE or TYPE_CHECKING:
+            task_id = get_progress().add_task(description, True, total)
+            self.update = partial(get_progress().update, task_id, refresh=True)
+        else:
+            print(description)
+            self.update = lambda **_: 0
