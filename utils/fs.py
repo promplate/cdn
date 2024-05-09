@@ -1,19 +1,22 @@
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 from functools import wraps
 from pathlib import Path
+from typing import Literal, cast
+
+from aiofiles import open
 
 root = Path("data")
 
 
 @wraps(open)
-@contextmanager
-def safe_open(file, mode: str):
+@asynccontextmanager
+async def safe_open(file, mode):
     path = Path(file)
 
     tmp_path = root / "tmp" / path.relative_to(root)
     try:
         tmp_path.parent.mkdir(exist_ok=True)
-        with tmp_path.open(mode) as f:
+        async with open(tmp_path, cast(Literal["rb", "wb"], mode)) as f:
             yield f
 
         tmp_path.replace(path)

@@ -12,20 +12,26 @@ block_size = 1024 * 1024 * 4
 
 
 @run_in_threadpool
-def decompress_bz2(path: Path):
+def _decompress_bz2(path: Path):
     if path.with_suffix("").exists():
         return
 
     task = Task(f"decompressing [b]{path.name}", path.stat().st_size)
 
-    with BZ2File(path, "rb") as bz2_file, safe_open(path.with_suffix(""), "wb") as tar:
+    with BZ2File(path, "rb") as file:
         while True:
             with lock:
-                block = bz2_file.read(block_size)
+                block = file.read(block_size)
 
             if not block:
                 break
 
-            tar.write(block)
+            yield block
 
             task.update(advance=block_size)
+
+
+async def decompress_bz2(path: Path):
+    async with safe_open(path.with_suffix(""), "wb") as tar:
+        async for block in _decompress_bz2(path):
+            await tar.write(block)

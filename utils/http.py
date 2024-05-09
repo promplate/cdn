@@ -43,7 +43,7 @@ async def download(owner: str, repo: str, tag: str, asset: str):
 
     task.update(total=int(res.headers["content-length"]))
 
-    with safe_open(path, "wb") as f:
+    async with safe_open(path, "wb") as f:
         async for i in await cast(Awaitable[AsyncIterable[bytes]], res.iter_content()):
-            f.write(i)
+            await f.write(i)
             task.update(advance=len(i))
