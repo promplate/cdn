@@ -4,7 +4,7 @@ from contextlib import suppress
 from functools import cache, partial, wraps
 from inspect import isgeneratorfunction
 from os import cpu_count
-from typing import Any, AsyncGenerator, Awaitable, Callable, Generator, ParamSpec, TypeVar, overload
+from typing import Any, AsyncGenerator, Awaitable, Callable, Generator, Iterator, ParamSpec, TypeVar, overload
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -28,10 +28,15 @@ def run_in_threadpool(func):  # type: ignore
 
         @wraps(func)
         async def _(*args, **kwargs):
-            it = func(*args, **kwargs)
+            it: Iterator = func(*args, **kwargs)
             with suppress(StopIteration):
+                obj = object()
                 while True:
-                    yield await get_running_loop().run_in_executor(get_thead_pool(), it.__next__)
+                    res = await get_running_loop().run_in_executor(get_thead_pool(), next, it, obj)
+                    if res is obj:
+                        break
+                    else:
+                        yield res
 
     else:
 

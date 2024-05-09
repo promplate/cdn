@@ -8,7 +8,7 @@ from .sync import run_in_threadpool
 
 lock = Lock()
 
-block_size = 1024 * 1024 * 4
+block_size = 1024 * 1024 * 100  # 100MB
 
 
 @run_in_threadpool
@@ -16,7 +16,7 @@ def _decompress_bz2(path: Path):
     if path.with_suffix("").exists():
         return
 
-    task = Task(f"decompressing [b]{path.name}", path.stat().st_size)
+    task = Task(f"decompressing [b]{path.name}")
 
     with BZ2File(path, "rb") as file:
         while True:
@@ -28,7 +28,7 @@ def _decompress_bz2(path: Path):
 
             yield block
 
-            task.update(advance=block_size)
+    task.update(total=1, completed=1)
 
 
 async def decompress_bz2(path: Path):
