@@ -1,0 +1,23 @@
+[[headers]]
+for = "/pyodide/*"
+
+[headers.values]
+x-frame-options = "ALLOWALL"
+cache-control = "public, max-age=604800, immutable"
+access-control-allow-origin = "*"
+access-control-allow-headers = "*"
+access-control-allow-methods = "GET, HEAD, OPTIONS"
+access-control-allow-credentials = "true"
+access-control-max-age = "604800"
+
+[[redirects]]
+from = "/"
+to = "https://promplate.dev"
+
+[[redirects]]
+from = "/pyodide/dev/*"
+to = "https://cdn.jsdelivr.net/pyodide/dev/full/:splat"
+status = 200
+
+[build]
+ignore = "git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF | awk '/\\.py$/ {exit 1}'"
