@@ -1,6 +1,8 @@
 from asyncio import Semaphore, gather
 from os import getenv
 
+from packaging.version import Version
+
 from utils.bz2 import decompress_bz2
 from utils.fs import root
 from utils.http import download, get_releases
@@ -25,7 +27,7 @@ async def download_all():
     releases = [
         (tag_name, name)
         for release in await get_releases("pyodide", "pyodide")
-        if (tag_name := release["tag_name"]) >= "0.25.0"
+        if Version(tag_name := release["tag_name"]) >= Version("0.25.0")
         for asset in release["assets"]
         if (name := asset["name"]) == f"pyodide-{tag_name}.tar.bz2"
     ]

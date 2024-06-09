@@ -1,5 +1,10 @@
 [project]
-dependencies = ["niquests~=3.6.6", "rich~=13.7.1", "aiofiles~=23.2.1"]
+dependencies = [
+    "niquests~=3.6.6",
+    "rich~=13.7.1",
+    "aiofiles~=23.2.1",
+    "packaging~=24.0",
+]
 requires-python = "==3.12.*"
 
 [tool.pdm]
