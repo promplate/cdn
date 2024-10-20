@@ -27,7 +27,7 @@ async def download_all():
     releases = [
         (tag_name, name)
         for release in await get_releases("pyodide", "pyodide")
-        if Version(tag_name := release["tag_name"]) >= Version("0.25.0")
+        if Version(tag_name := release["tag_name"]) >= minimum_version
         for asset in release["assets"]
         if (name := asset["name"]) == f"pyodide-{tag_name}.tar.bz2"
     ]
@@ -35,3 +35,6 @@ async def download_all():
     task.update(total=1, completed=1)
 
     await gather(*(download_one(*args) for args in releases))
+
+
+minimum_version = Version(getenv("PYODIDE_MINIMUM_VERSION", "0.25.0"))
