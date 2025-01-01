@@ -5,12 +5,12 @@ dependencies = [
     "aiofiles~=23.2.1",
     "packaging~=24.0",
 ]
-requires-python = "==3.12.*"
+requires-python = ">=3.12"
 
 [tool.pdm]
 distribution = false
 
-[tool.pdm.dev-dependencies]
+[dependency-groups]
 dev = ["ruff~=0.4.8"]
 
 [tool.pdm.scripts]
